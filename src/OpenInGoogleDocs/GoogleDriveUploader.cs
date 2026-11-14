@@ -11,17 +11,14 @@ using DriveFile = Google.Apis.Drive.v3.Data.File;
 namespace OpenInGoogleDocs;
 
 /// <summary>
-/// The real IDocumentUploader: uploads a .docx to Google Drive and asks Drive
-/// to convert it into a native Google Doc on the way in.
+/// The real IDocumentUploader: uploads an Office file to Google Drive and asks Drive
+/// to convert it into a native Google Doc, Sheet or Slides file on the way in.
 /// This class is a thin "adapter" around Google's library and is deliberately not
 /// unit-tested: there's almost no logic of ours in it, and the only meaningful test is a real
 /// upload. All the decisions live in Core, which is tested.
 /// </summary>
 internal sealed class GoogleDriveUploader : IDocumentUploader
 {
-    private const string WordMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    private const string GoogleDocMimeType = "application/vnd.google-apps.document";
-
     private readonly DriveService _drive;
 
     // Private constructor + public static CreateAsync: constructors can't be async,
@@ -60,14 +57,14 @@ internal sealed class GoogleDriveUploader : IDocumentUploader
         return new GoogleDriveUploader(drive);
     }
 
-    public async Task<Uri> UploadAsGoogleDocAsync(string localPath, string title, CancellationToken cancellationToken)
+    public async Task<Uri> UploadAsync(string localPath, string title, DocumentKind kind, CancellationToken cancellationToken)
     {
-        // The key trick: we SEND Word content (WordMimeType) but tell Drive the file should BE
-        // a Google Doc (GoogleDocMimeType). When those differ, Drive converts it on upload.
-        var metadata = new DriveFile { Name = title, MimeType = GoogleDocMimeType };
+        // The key trick: we SEND the original content (SourceMimeType) but tell Drive the file
+        // should BE a Google Doc/Sheet/Slides (GoogleMimeType). When those differ, Drive converts it.
+        var metadata = new DriveFile { Name = title, MimeType = kind.GoogleMimeType };
 
         await using var content = File.OpenRead(localPath);
-        var request = _drive.Files.Create(metadata, content, WordMimeType);
+        var request = _drive.Files.Create(metadata, content, kind.SourceMimeType);
 
         // By default Drive returns very few fields. Ask for the link we want to open.
         request.Fields = "id, webViewLink";

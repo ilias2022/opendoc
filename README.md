@@ -1,6 +1,6 @@
 # Open in Google Docs
 
-Right-click a `.docx` → **Send to → Open in Google Docs**. It uploads the file to your Google Drive as a native Google Doc and opens it in your browser.
+Right-click a Word, Excel or PowerPoint file (.docx, .doc, .odt, .rtf, .xlsx, .xls, .ods, .csv, .pptx, .ppt, .odp) → **Send to → Open in Google Docs**. It uploads the file to your Google Drive as a native Google Doc, Sheet or Slides file and opens it in your browser.
 
 ## Layout
 
@@ -48,7 +48,7 @@ On Windows 11, **Send to** lives under **Show more options** in the right-click 
 
 ### Optional: top-level right-click entry (Windows 11)
 
-To get **Open in Google Docs** in the main right-click menu for `.docx` files, instead of under Send to:
+To get **Open in Google Docs** in the main right-click menu for these files, instead of under Send to:
 
 1. Turn on **Developer Mode** (Settings → System → For developers). The package is unsigned, so Windows needs this to register it.
 2. From the repo root in Windows PowerShell: `.\install-context-menu.ps1`

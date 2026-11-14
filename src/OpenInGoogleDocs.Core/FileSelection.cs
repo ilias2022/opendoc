@@ -6,7 +6,7 @@ namespace OpenInGoogleDocs.Core;
 /// </summary>
 public sealed record FileSelection(IReadOnlyList<string> Accepted, IReadOnlyList<FileProblem> Rejected)
 {
-    private const string WordLockFilePrefix = "~$";
+    private const string OfficeLockFilePrefix ="~$";
 
     /// <param name="args">The raw command-line arguments: one path per selected file.</param>
     /// <param name="fileExists">
@@ -33,10 +33,10 @@ public sealed record FileSelection(IReadOnlyList<string> Accepted, IReadOnlyList
 
             var fileName = PathParts.FileName(arg);
 
-            if (!fileName.EndsWith(".docx", StringComparison.OrdinalIgnoreCase))
-                rejected.Add(new FileProblem(arg, "Only .docx files are supported."));
-            else if (fileName.StartsWith(WordLockFilePrefix, StringComparison.Ordinal))
-                rejected.Add(new FileProblem(arg, "This is a Word lock file (Word creates it while the document is open), not a real document."));
+            if (DocumentKind.For(fileName) is null)
+                rejected.Add(new FileProblem(arg, $"Unsupported file type. Supported: {string.Join(", ", DocumentKind.SupportedExtensions)}."));
+            else if (fileName.StartsWith(OfficeLockFilePrefix, StringComparison.Ordinal))
+                rejected.Add(new FileProblem(arg, "This is an Office lock file (Office creates it while the document is open), not a real document."));
             else if (!fileExists(arg))
                 rejected.Add(new FileProblem(arg, "File not found."));
             else

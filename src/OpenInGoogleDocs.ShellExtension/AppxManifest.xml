@@ -36,7 +36,7 @@
     <Application Id="App" Executable="OpenInGoogleDocs.exe" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="win32App">
       <uap:VisualElements
         DisplayName="Open in Google Docs"
-        Description="Open a .docx as a Google Doc"
+        Description="Open a Word, Excel or PowerPoint file in Google Docs, Sheets or Slides"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Logo.png"
         Square44x44Logo="Assets\Logo.png"
@@ -45,6 +45,36 @@
         <desktop4:Extension Category="windows.fileExplorerContextMenus">
           <desktop4:FileExplorerContextMenus>
             <desktop5:ItemType Type=".docx">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".doc">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".odt">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".rtf">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".xlsx">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".xls">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".ods">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".csv">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".pptx">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".ppt">
+              <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type=".odp">
               <desktop5:Verb Id="OpenInGoogleDocs" Clsid="6B1D4F0E-3C52-4A8B-9E47-2D5A7C81F3B9" />
             </desktop5:ItemType>
           </desktop4:FileExplorerContextMenus>
