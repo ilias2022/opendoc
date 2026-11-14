@@ -1,0 +1,4 @@
+bin/
+obj/
+# OAuth client file: keep it out of git.
+credentials.json

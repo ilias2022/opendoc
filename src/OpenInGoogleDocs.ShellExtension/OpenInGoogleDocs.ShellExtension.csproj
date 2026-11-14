@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Builds OpenInGoogleDocs.ShellExtension.comhost.dll: the native shim Windows loads,
+         which in turn starts .NET and creates our OpenInGoogleDocsCommand class. -->
+    <EnableComHosting>true</EnableComHosting>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+</Project>

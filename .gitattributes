@@ -1,0 +1,7 @@
+# Let Git normalize text files itself, regardless of each machine's core.autocrlf setting.
+* text=auto
+
+# Windows-centric files stay CRLF in the working copy.
+*.ps1 text eol=crlf
+*.sln text eol=crlf
+*.slnx text eol=crlf

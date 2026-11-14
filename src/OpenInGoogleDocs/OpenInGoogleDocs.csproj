@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- WinExe (not Exe): a Windows app with no console window, so nothing flashes up on right-click. -->
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenInGoogleDocs.Core\OpenInGoogleDocs.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Your Google OAuth client file. Copied next to the .exe on build/publish, if it exists.
+         It's in .gitignore, so it never gets committed. -->
+    <None Include="credentials.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('credentials.json')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.78.0.4327" />
+  </ItemGroup>
+
+</Project>

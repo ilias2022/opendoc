@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OpenInGoogleDocs.Core/OpenInGoogleDocs.Core.csproj" />
+    <Project Path="src/OpenInGoogleDocs/OpenInGoogleDocs.csproj" />
+    <Project Path="src/OpenInGoogleDocs.ShellExtension/OpenInGoogleDocs.ShellExtension.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OpenInGoogleDocs.Tests/OpenInGoogleDocs.Tests.csproj" />
+  </Folder>
+</Solution>
