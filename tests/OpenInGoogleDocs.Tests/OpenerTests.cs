@@ -8,13 +8,13 @@ public class OpenerTests
     // read exactly what they do. They record what happened so the tests can check it.
     private sealed class FakeUploader : IDocumentUploader
     {
-        public List<(string Path, string Title)> Uploads { get; } = new();
+        public List<(string Path, string Title, string Google)> Uploads { get; } = new();
         public HashSet<string> FailFor { get; } = new();
 
-        public Task<Uri> UploadAsGoogleDocAsync(string localPath, string title, CancellationToken cancellationToken)
+        public Task<Uri> UploadAsync(string localPath, string title, DocumentKind kind, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Uploads.Add((localPath, title));
+            Uploads.Add((localPath, title, kind.GoogleMimeType));
 
             if (FailFor.Contains(localPath))
                 throw new IOException("Disk on fire");
@@ -36,12 +36,16 @@ public class OpenerTests
         var browser = new FakeBrowser();
 
         var problems = await new Opener(uploader, browser).OpenAllAsync(
-            new[] { @"C:\Docs\one.docx", @"C:\Docs\two.docx" },
+            new[] { @"C:\Docs\one.docx", @"C:\Docs\two.xlsx" },
             CancellationToken.None);
 
         Assert.Empty(problems);
         Assert.Equal(
-            new[] { (@"C:\Docs\one.docx", "one"), (@"C:\Docs\two.docx", "two") },
+            new[]
+            {
+                (@"C:\Docs\one.docx", "one", "application/vnd.google-apps.document"),
+                (@"C:\Docs\two.xlsx", "two", "application/vnd.google-apps.spreadsheet"),
+            },
             uploader.Uploads);
         Assert.Equal(
             new[]

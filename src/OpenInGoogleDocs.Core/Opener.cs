@@ -21,7 +21,9 @@ public sealed class Opener(IDocumentUploader uploader, IBrowser browser)
         {
             try
             {
-                var url = await uploader.UploadAsGoogleDocAsync(path, DocumentTitle.From(path), cancellationToken);
+                var kind = DocumentKind.For(PathParts.FileName(path))
+                    ?? throw new InvalidOperationException("Unsupported file type.");
+                var url = await uploader.UploadAsync(path, DocumentTitle.From(path), kind, cancellationToken);
                 browser.Open(url);
             }
             catch (OperationCanceledException)

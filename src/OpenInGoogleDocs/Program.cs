@@ -16,7 +16,7 @@ var reporter = new ErrorReporter(Path.Combine(appDataFolder, "log.txt"));
 
 if (args.Length == 0)
 {
-    reporter.ShowInfo("Right-click a .docx file and choose Send to > Open in Google Docs.");
+    reporter.ShowInfo("Right-click a Word, Excel or PowerPoint file and choose Open in Google Docs.");
     return 0;
 }
 

@@ -21,6 +21,19 @@ public class FileSelectionTests
         Assert.Empty(selection.Rejected);
     }
 
+    [Theory]
+    [InlineData(@"C:\Docsudget.xlsx")]
+    [InlineData(@"C:\Docs\data.csv")]
+    [InlineData(@"C:\Docs\deck.pptx")]
+    [InlineData(@"C:\Docs\old.ppt")]
+    public void Accepts_spreadsheets_and_presentations(string path)
+    {
+        var selection = FileSelection.From(new[] { path }, Existing(path));
+
+        Assert.Equal(new[] { path }, selection.Accepted);
+        Assert.Empty(selection.Rejected);
+    }
+
     [Fact]
     public void Treats_the_extension_case_insensitively()
     {
@@ -32,7 +45,7 @@ public class FileSelectionTests
     }
 
     [Fact]
-    public void Rejects_files_that_are_not_docx()
+    public void Rejects_unsupported_file_types()
     {
         var selection = FileSelection.From(
             new[] { @"C:\Docs\photo.jpg" },
@@ -41,7 +54,7 @@ public class FileSelectionTests
         Assert.Empty(selection.Accepted);
         var problem = Assert.Single(selection.Rejected);
         Assert.Equal(@"C:\Docs\photo.jpg", problem.Path);
-        Assert.Contains(".docx", problem.Reason);
+        Assert.Contains("Unsupported", problem.Reason);
     }
 
     [Fact]
@@ -63,7 +76,7 @@ public class FileSelectionTests
     [Theory]
     [InlineData(@"C:\Docs\~$report.docx")]
     [InlineData("C:/Docs/~$report.docx")]
-    public void Rejects_Word_lock_files(string lockFile)
+    public void Rejects_Office_lock_files(string lockFile)
     {
         var selection = FileSelection.From(new[] { lockFile }, Existing(lockFile));
 
