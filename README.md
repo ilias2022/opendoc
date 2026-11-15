@@ -6,7 +6,7 @@ Right-click a Word, Excel or PowerPoint file (.docx, .doc, .odt, .rtf, .xlsx, .x
 
 | Project | What it is | Tested? |
 |---|---|---|
-| `src/OpenInGoogleDocs.Core` | All the decisions: which files to accept, what to name them, the upload-then-open loop. No Google, no Windows. | Yes, fully |
+| `src/OpenInGoogleDocs.Core` | All the decisions: which files to accept, what to name them, the upload-then-open loop. No Google, no Windows. | Yes |
 | `src/OpenInGoogleDocs` | The Windows app: entry point, Google Drive adapter, browser launcher, error dialog. | No (thin wrappers around other libraries) |
 | `tests/OpenInGoogleDocs.Tests` | xUnit tests for Core. | n/a |
 
@@ -59,6 +59,8 @@ It publishes the app and `src/OpenInGoogleDocs.ShellExtension` into `C:\Tools\Op
 
 Your browser opens to sign in to Google and approve access. You may see "Google hasn't verified this app". It's your own app, so choose **Advanced → Go to (app name)**. After that, the token is saved in `%LOCALAPPDATA%\OpenInGoogleDocs\token` and later runs go straight to the document.
 
-The app only asks for the `drive.file` permission, so it can see files it created and nothing else in your Drive.
+The app only asks for the `drive.file` permission. That is narrow: it can access files the app itself creates (or that you explicitly open with it), not the rest of your Drive.
 
 Problems show up as a Windows dialog, and full details go to `%LOCALAPPDATA%\OpenInGoogleDocs\log.txt`.
+
+**Privacy:** that log can contain the names and paths of files you tried to open, plus error details. It stays on your machine, is never uploaded, and is capped at about 256 KB (one older copy is kept as `log.txt.old`). Delete the folder any time.

@@ -37,7 +37,8 @@ public sealed class OpenInGoogleDocsCommand : IExplorerCommand
 
     public void GetIcon(IShellItemArray? items, out string icon) => icon = ExePath + ",0";
 
-    public void GetToolTip(IShellItemArray? items, out string tip) => throw new NotImplementedException();
+    public void GetToolTip(IShellItemArray? items, out string tip) =>
+        tip = "Upload to Google Drive and open as a Google Doc, Sheet or Slides file";
 
     public void GetCanonicalName(out Guid guid) => guid = new Guid(ClassId);
 
@@ -48,6 +49,13 @@ public sealed class OpenInGoogleDocsCommand : IExplorerCommand
         try
         {
             if (items is null) { Log("Invoke: no items"); return; }
+
+            if (!File.Exists(ExePath))
+            {
+                Log($"Invoke: {ExePath} not found");
+                ShowError("Open in Google Docs can't find its program file. Try reinstalling it.");
+                return;
+            }
 
             var startInfo = new ProcessStartInfo(ExePath) { UseShellExecute = false };
 
@@ -65,14 +73,25 @@ public sealed class OpenInGoogleDocsCommand : IExplorerCommand
         }
         catch (Exception ex)
         {
+            // Never let a managed exception escape into Explorer: log it and tell the user instead.
             Log($"Invoke failed: {ex}");
-            throw;
+            ShowError($"Couldn't start Open in Google Docs: {ex.Message}");
         }
     }
 
+    private static void ShowError(string message)
+    {
+        try { MessageBox(IntPtr.Zero, message, "Open in Google Docs", 0x10 /* MB_ICONERROR */); }
+        catch { /* nothing more we can do */ }
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
     public void GetFlags(out uint flags) => flags = 0; // ECF_DEFAULT
 
-    public void EnumSubCommands(out IntPtr enumerator) => throw new NotImplementedException();
+    // We have no sub-commands (GetFlags says so). Never throw into Explorer: hand back "nothing".
+    public void EnumSubCommands(out IntPtr enumerator) => enumerator = IntPtr.Zero;
 
     private const uint SIGDN_FILESYSPATH = 0x80058000;
 }

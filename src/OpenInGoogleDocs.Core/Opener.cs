@@ -5,7 +5,7 @@ namespace OpenInGoogleDocs.Core;
 /// It only knows about the two interfaces, not about Google or Windows,
 /// which is what makes it testable with fakes.
 /// </summary>
-public sealed class Opener(IDocumentUploader uploader, IBrowser browser)
+public sealed class Opener(IDocumentUploader uploader, IBrowser browser, TimeSpan? perFileTimeout = null)
 {
     /// <returns>The files that failed, with reasons. An empty list means everything worked.</returns>
     public async Task<IReadOnlyList<FileProblem>> OpenAllAsync(
@@ -23,8 +23,19 @@ public sealed class Opener(IDocumentUploader uploader, IBrowser browser)
             {
                 var kind = DocumentKind.For(PathParts.FileName(path))
                     ?? throw new InvalidOperationException("Unsupported file type.");
-                var url = await uploader.UploadAsync(path, DocumentTitle.From(path), kind, cancellationToken);
+
+                // Each file gets its own time limit, so one stuck upload can't sink the whole batch.
+                using var fileCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                if (perFileTimeout is { } limit)
+                    fileCts.CancelAfter(limit);
+
+                var url = await uploader.UploadAsync(path, DocumentTitle.From(path), kind, fileCts.Token);
                 browser.Open(url);
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                // Only this file's own time limit fired (the caller didn't cancel): a per-file problem.
+                problems.Add(new FileProblem(path, "Timed out while uploading to Google Drive."));
             }
             catch (OperationCanceledException)
             {

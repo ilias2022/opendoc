@@ -10,6 +10,7 @@ namespace OpenInGoogleDocs;
 internal sealed class ErrorReporter(string logPath)
 {
     private const string Caption = "Open in Google Docs";
+    private const long MaxLogBytes = 256 * 1024;
 
     // Icon codes for MessageBox, from the Windows API documentation.
     private const uint IconError = 0x10;
@@ -42,6 +43,10 @@ internal sealed class ErrorReporter(string logPath)
     {
         try
         {
+            // Keep the log from growing forever: past 256 KB, start a fresh one (keeping one old copy).
+            if (File.Exists(logPath) && new FileInfo(logPath).Length > MaxLogBytes)
+                File.Move(logPath, logPath + ".old", overwrite: true);
+
             File.AppendAllText(logPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {text}{Environment.NewLine}");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

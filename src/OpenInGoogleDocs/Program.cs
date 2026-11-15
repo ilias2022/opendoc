@@ -20,9 +20,9 @@ if (args.Length == 0)
     return 0;
 }
 
-// Safety net: there's no window to close, so if something waits forever
+// Safety net: there's no window to close, so if sign-in waits forever
 // (e.g. you close the Google sign-in tab without finishing), give up after 5 minutes
-// instead of leaving an invisible process running.
+// instead of leaving an invisible process running. Uploads have their own per-file limit below.
 using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(5));
 
 try
@@ -38,8 +38,8 @@ try
             tokenFolder: Path.Combine(appDataFolder, "token"),
             timeout.Token);
 
-        var opener = new Opener(uploader, new ShellBrowser());
-        problems.AddRange(await opener.OpenAllAsync(selection.Accepted, timeout.Token));
+        var opener = new Opener(uploader, new ShellBrowser(), perFileTimeout: TimeSpan.FromMinutes(3));
+        problems.AddRange(await opener.OpenAllAsync(selection.Accepted, CancellationToken.None));
     }
 
     if (problems.Count > 0)

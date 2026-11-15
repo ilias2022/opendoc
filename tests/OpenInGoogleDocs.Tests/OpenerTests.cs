@@ -73,6 +73,32 @@ public class OpenerTests
         Assert.Single(browser.Opened); // only the good one was opened
     }
 
+    private sealed class HangingUploader : IDocumentUploader
+    {
+        public async Task<Uri> UploadAsync(string localPath, string title, DocumentKind kind, CancellationToken cancellationToken)
+        {
+            if (localPath.Contains("stuck"))
+                await Task.Delay(Timeout.Infinite, cancellationToken);
+            return new Uri("https://docs.google.com/document/d/ok/edit");
+        }
+    }
+
+    [Fact]
+    public async Task A_stuck_upload_times_out_without_sinking_the_rest_of_the_batch()
+    {
+        var browser = new FakeBrowser();
+        var opener = new Opener(new HangingUploader(), browser, TimeSpan.FromMilliseconds(100));
+
+        var problems = await opener.OpenAllAsync(
+            new[] { @"C:\Docs\stuck.docx", @"C:\Docs\fine.docx" },
+            CancellationToken.None);
+
+        var problem = Assert.Single(problems);
+        Assert.Equal(@"C:\Docs\stuck.docx", problem.Path);
+        Assert.Contains("Timed out", problem.Reason);
+        Assert.Single(browser.Opened);
+    }
+
     [Fact]
     public async Task Does_not_swallow_cancellation()
     {
